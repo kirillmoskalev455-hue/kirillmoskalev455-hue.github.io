@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>GCSE 中文 Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f3f4f6;
+    --surface: #ffffff;
+    --surface-2: #f8fafc;
+    --surface-3: #eef2f7;
+    --text: #1f2937;
+    --text-soft: #6b7280;
+    --text-faint: #9ca3af;
+    --border: #d1d5db;
+    --border-soft: #e5e7eb;
+    --blue: #2563eb;
+    --blue-soft: #dbeafe;
+    --blue-deep: #1d4ed8;
+    --blue-border: #bfdbfe;
+    --known-dot: #93c5fd;
+    --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    --green: #16a34a;
+    --green-soft: #dcfce7;
+    --green-border: #bbf7d0;
+    --green-deep: #15803d;
+    --amber: #d97706;
+    --amber-soft: #fef3c7;
+    --amber-border: #fde68a;
+    --amber-deep: #b45309;
+    --red: #dc2626;
+    --red-soft: #fee2e2;
+    --red-border: #fecaca;
+  }
+  html[data-theme='dark'] {
+    --bg: #0f172a;
+    --surface: #111827;
+    --surface-2: #1f2937;
+    --surface-3: #273449;
+    --text: #e5e7eb;
+    --text-soft: #cbd5e1;
+    --text-faint: #94a3b8;
+    --border: #475569;
+    --border-soft: #334155;
+    --blue: #60a5fa;
+    --blue-soft: rgba(96, 165, 250, 0.16);
+    --blue-deep: #93c5fd;
+    --blue-border: rgba(147, 197, 253, 0.38);
+    --known-dot: #60a5fa;
+    --shadow: 0 14px 34px rgba(2, 6, 23, 0.4);
+    --green: #4ade80;
+    --green-soft: rgba(74, 222, 128, 0.12);
+    --green-border: rgba(74, 222, 128, 0.3);
+    --green-deep: #86efac;
+    --amber: #fbbf24;
+    --amber-soft: rgba(251, 191, 36, 0.12);
+    --amber-border: rgba(251, 191, 36, 0.3);
+    --amber-deep: #fcd34d;
+    --red: #f87171;
+    --red-soft: rgba(248, 113, 113, 0.12);
+    --red-border: rgba(248, 113, 113, 0.3);
+  }
+  body {
+    font-family: 'Noto Sans SC', 'Noto Sans', system-ui, sans-serif;
+    min-height: 100vh;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    padding: 20px 16px;
+    overflow-x: hidden;
+    background: var(--bg);
+    color: var(--text);
+  }
+  button { font-family: inherit; cursor: pointer; }
+  .container { max-width: 600px; margin: 0 auto; }
+  .header, .mode-tabs, .controls, .nav, .dots, .pills, .sections { position: relative; z-index: 1; }
+
+  .header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+  .header h1 { font-size: 20px; font-weight: 500; letter-spacing: 1px; }
+  .header .sub { font-size: 11px; color: var(--text-faint); margin-top: 2px; letter-spacing: 2px; text-transform: uppercase; }
+  .header .count { font-size: 12px; color: var(--text-soft); }
+  .header-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+  .theme-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 42px; height: 42px; padding: 0 12px; border-radius: 999px;
+    border: 1px solid var(--border-soft); background: var(--surface); color: var(--text-soft);
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04); font-size: 16px; transition: all 0.2s ease;
+  }
+  .theme-toggle:hover { background: var(--surface-2); color: var(--text); }
+
+  .mode-tabs { display: flex; gap: 0; margin-bottom: 18px; border-radius: 12px; overflow: hidden; width: fit-content; background: var(--surface); border: 1px solid var(--border-soft); box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04); }
+  .mode-tab {
+    padding: 7px 14px; font-size: 12px; font-weight: 500;
+    border: none; background: transparent; transition: all 0.2s;
+    letter-spacing: 0.5px; white-space: nowrap; position: relative;
+  }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .pill { padding: 5px 12px; border-radius: 20px; font-size: 11px; background: var(--surface); transition: all 0.2s; border: 1px solid var(--border-soft); color: var(--text-soft); }
+  .sections { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 16px; }
+  .sec-btn { padding: 3px 10px; border-radius: 12px; border: 1px solid var(--border-soft); font-size: 10px; background: var(--surface); color: var(--text-soft); }
+  .controls { display: flex; gap: 8px; margin-bottom: 16px; align-items: center; }
+  .ctrl-btn { padding: 4px 12px; border-radius: 14px; font-size: 11px; background: var(--surface); border: 1px solid var(--border-soft); color: var(--text-soft); }
+  .hint { font-size: 10px; color: var(--text-faint); margin-left: auto; }
+
+  .progress-bar { height: 4px; border-radius: 999px; margin-bottom: 20px; overflow: hidden; background: var(--border-soft); }
+  .progress-fill { height: 100%; border-radius: 2px; transition: width 0.3s ease; }
+
+  .card-wrap { position: relative; cursor: pointer; margin-bottom: 20px; height: 280px; user-select: none; }
+  .card-inner { position: relative; width: 100%; height: 100%; }
+  .card-face { position: absolute; inset: 0; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; background: var(--surface); border: 1px solid var(--border-soft); box-shadow: var(--shadow); }
+  .card-front { display: flex; }
+  .card-back { display: none; }
+  .card-inner.flipped .card-front { display: none; }
+  .card-inner.flipped .card-back { display: flex; }
+  .card-section { font-size: 9px; text-transform: uppercase; letter-spacing: 3px; color: var(--text-faint); margin-bottom: 20px; }
+  .card-char { font-weight: 300; letter-spacing: 8px; line-height: 1.2; }
+  .card-pinyin { font-size: 14px; margin-top: 12px; color: var(--blue); font-style: italic; }
+  .card-eng { font-size: 22px; font-weight: 400; line-height: 1.5; color: var(--text); }
+  .card-ghost { font-size: 40px; margin-top: 16px; color: var(--text-faint); }
+  .tap-hint { font-size: 10px; color: var(--text-faint); margin-top: 24px; }
+  .learned-badge { position: absolute; top: 16px; right: 16px; font-size: 10px; color: var(--blue-deep); background: var(--blue-soft); padding: 2px 8px; border-radius: 8px; border: 1px solid var(--blue-border); }
+
+  .nav { display: flex; gap: 10px; justify-content: center; align-items: center; margin-bottom: 24px; }
+  .nav-arrow { width: 44px; height: 44px; border-radius: 22px; background: var(--surface); font-size: 18px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-soft); color: var(--text); }
+  .mark-btn { padding: 10px 20px; border-radius: 16px; font-size: 12px; font-weight: 500; border: 1px solid var(--border); background: var(--surface); color: var(--text-soft); }
+  .mark-learn { border: 1px solid var(--border); background: var(--surface); color: var(--text-soft); }
+  .mark-got { border: 1px solid var(--blue-border); background: var(--blue-soft); color: var(--blue-deep); }
+  .nav-count { font-size: 13px; color: var(--text-soft); min-width: 60px; text-align: center; }
+
+  .dots { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; padding: 12px 0; }
+  .dot { width: 8px; height: 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s; border: none; background: var(--border); }
+
+  /* Vocab list */
+  .vocab-section { margin-bottom: 28px; }
+  .vocab-section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: var(--blue); margin-bottom: 10px; font-weight: 600; padding-bottom: 8px; border-bottom: 1px solid var(--blue-border); }
+  .vocab-table { width: 100%; border-collapse: collapse; }
+  .vocab-table tr { transition: background 0.15s; }
+  .vocab-table tr:hover { background: var(--surface-2); }
+  .vocab-table td { padding: 9px 10px; font-size: 14px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; }
+  .vocab-char { font-size: 22px; font-weight: 400; width: 80px; letter-spacing: 2px; }
+  .vocab-pinyin { font-size: 12px; font-style: italic; color: var(--blue); width: 110px; }
+  .vocab-eng { font-size: 13px; color: var(--text-soft); }
+  .vocab-count { font-size: 11px; color: var(--text-soft); margin-top: 8px; text-align: right; padding-bottom: 20px; }
+
+  /* SRS Dashboard */
+  .srs-dashboard { padding: 0; }
+  .srs-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    margin-bottom: 20px;
+  }
+  .srs-stat {
+    background: var(--surface); border: 1px solid var(--border-soft);
+    border-radius: 16px; padding: 16px 12px; text-align: center;
+    box-shadow: 0 2px 10px rgba(15,23,42,0.04);
+  }
+  .srs-stat-num { font-size: 28px; font-weight: 300; line-height: 1; }
+  .srs-stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-faint); margin-top: 6px; }
+  .srs-action-card {
+    background: var(--surface); border: 1px solid var(--border-soft);
+    border-radius: 20px; padding: 24px; margin-bottom: 14px;
+    box-shadow: var(--shadow); cursor: pointer; transition: all 0.2s;
+  }
+  .srs-action-card:hover { border-color: var(--blue-border); transform: translateY(-1px); }
+  .srs-action-card.disabled { opacity: 0.5; pointer-events: none; }
+  .srs-action-title { font-size: 16px; font-weight: 500; margin-bottom: 4px; }
+  .srs-action-desc { font-size: 12px; color: var(--text-soft); line-height: 1.5; }
+  .srs-action-badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 10px; border-radius: 10px; margin-bottom: 10px;
+  }
+  .srs-streak {
+    background: var(--surface); border: 1px solid var(--border-soft);
+    border-radius: 16px; padding: 16px; margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(15,23,42,0.04);
+  }
+  .srs-streak-title { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-faint); margin-bottom: 10px; }
+  .srs-streak-days { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+  .srs-streak-dot {
+    width: 28px; height: 28px; border-radius: 8px; display: flex;
+    align-items: center; justify-content: center; font-size: 9px;
+    font-weight: 500; border: 1px solid var(--border-soft);
+  }
+
+  /* SRS review buttons */
+  .srs-grade-btns { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
+  .srs-grade-btn {
+    padding: 10px 16px; border-radius: 14px; font-size: 12px; font-weight: 500;
+    border: 1px solid var(--border-soft); background: var(--surface); color: var(--text-soft);
+    transition: all 0.15s; min-width: 80px;
+  }
+  .srs-grade-btn .next-review { display: block; font-size: 9px; color: var(--text-faint); margin-top: 2px; }
+  .srs-grade-btn:hover { transform: translateY(-1px); }
+
+  .srs-review-info {
+    text-align: center; font-size: 11px; color: var(--text-faint);
+    margin-bottom: 16px; letter-spacing: 0.5px;
+  }
+
+  /* New cards picker */
+  .new-cards-picker { margin-bottom: 20px; }
+  .new-cards-slider-wrap {
+    display: flex; align-items: center; gap: 16px; justify-content: center;
+    margin: 20px 0;
+  }
+  .new-cards-num { font-size: 36px; font-weight: 300; min-width: 48px; text-align: center; }
+  .new-cards-slider { flex: 1; max-width: 200px; accent-color: var(--blue); }
+  .new-cards-start {
+    display: block; margin: 0 auto; padding: 12px 32px; border-radius: 16px;
+    font-size: 14px; font-weight: 500; border: none;
+    background: var(--blue); color: white; transition: all 0.2s;
+  }
+  .new-cards-start:hover { opacity: 0.9; transform: translateY(-1px); }
+  .new-cards-start:disabled { opacity: 0.4; pointer-events: none; }
+
+  .fs-toggle {
+    position: absolute; right: 16px; bottom: 16px; z-index: 4;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px; padding: 0; border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: rgba(255, 255, 255, 0.74);
+    backdrop-filter: blur(10px);
+    color: rgba(31, 41, 55, 0.72);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    opacity: 0.88; transition: all 0.2s ease;
+  }
+  .fs-toggle svg {
+    width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.25;
+    fill: none; stroke-linecap: round; stroke-linejoin: round; pointer-events: none;
+  }
+  html[data-theme='dark'] .fs-toggle {
+    background: rgba(17, 24, 39, 0.62);
+    color: rgba(226, 232, 240, 0.78);
+    border-color: rgba(148, 163, 184, 0.16);
+    box-shadow: 0 10px 24px rgba(2, 6, 23, 0.28);
+  }
+  .fs-toggle:hover {
+    opacity: 1; color: var(--blue-deep); border-color: var(--blue-border);
+    background: var(--surface); transform: translateY(-1px);
+  }
+
+  body.fullscreen-active {
+    padding: 0; overflow: hidden;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; height: 100dvh;
+  }
+  body.fullscreen-active .header,
+  body.fullscreen-active .mode-tabs,
+  body.fullscreen-active #topicPills,
+  body.fullscreen-active #sectionBtns,
+  body.fullscreen-active .controls,
+  body.fullscreen-active .progress-bar,
+  body.fullscreen-active .nav,
+  body.fullscreen-active .dots,
+  body.fullscreen-active #vocabView,
+  body.fullscreen-active #srsView,
+  body.fullscreen-active .srs-grade-btns,
+  body.fullscreen-active .srs-review-info {
+    display: none !important;
+  }
+  body.fullscreen-active .container {
+    max-width: none; width: 100%; min-height: 100vh; min-height: 100dvh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px; padding: 24px 24px calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+  body.fullscreen-active #flashcardView { width: min(100%, 1180px); }
+  body.fullscreen-active .card-wrap { height: min(82vh, 820px); height: min(82dvh, 820px); margin-bottom: 0; }
+  body.fullscreen-active .card-face { border-radius: 28px; padding: 48px 56px; }
+  body.fullscreen-active .card-section { font-size: 12px; margin-bottom: 28px; }
+  body.fullscreen-active .card-eng { line-height: 1.35; max-width: 90%; text-align: center; }
+  body.fullscreen-active .card-ghost { margin-top: 24px; }
+  body.fullscreen-active .tap-hint { font-size: 12px; margin-top: 32px; }
+  body.fullscreen-active .learned-badge { top: 22px; right: 22px; font-size: 12px; padding: 4px 10px; }
+  body.fullscreen-active .fs-toggle { right: 22px; bottom: 22px; }
+
+  .round-complete {
+    margin-bottom: 20px; padding: 32px; border-radius: 24px;
+    background: var(--surface); border: 1px solid var(--border-soft);
+    box-shadow: var(--shadow); text-align: center;
+  }
+  .round-complete h2 { font-size: 28px; font-weight: 500; color: var(--text); margin-bottom: 10px; }
+  .round-complete p { font-size: 15px; line-height: 1.6; color: var(--text-soft); max-width: 520px; margin: 0 auto; }
+  .round-complete-meta { margin-top: 14px; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-faint); }
+  .round-complete-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 24px; }
+  .round-btn { min-width: 180px; justify-content: center; }
+  body.fullscreen-active .round-complete {
+    min-height: min(82vh, 820px); min-height: min(82dvh, 820px);
+    margin-bottom: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 48px 56px;
+  }
+  body.fullscreen-active .round-complete h2 { font-size: 42px; }
+  body.fullscreen-active .round-complete p { font-size: 22px; max-width: 720px; }
+  body.fullscreen-active .round-complete-meta { font-size: 14px; }
+
+  .hidden { display: none !important; }
+
+  /* Badge on tab */
+  .tab-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 18px; height: 18px; border-radius: 9px; font-size: 10px;
+    font-weight: 700; margin-left: 5px; padding: 0 5px;
+    background: var(--red); color: white; line-height: 1;
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 16px 12px; padding-bottom: env(safe-area-inset-bottom, 16px); }
+    .header h1 { font-size: 18px; }
+    .pills { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 4px; }
+    .pills::-webkit-scrollbar { display: none; }
+    .pill { flex-shrink: 0; padding: 8px 14px; font-size: 12px; }
+    .sections { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 4px; }
+    .sections::-webkit-scrollbar { display: none; }
+    .sec-btn { flex-shrink: 0; padding: 6px 12px; font-size: 11px; min-height: 32px; }
+    .nav { flex-wrap: wrap; gap: 8px; }
+    .mark-btn { padding: 10px 14px; font-size: 12px; min-height: 44px; }
+    .nav-arrow { width: 44px; height: 44px; min-width: 44px; }
+    .dot { width: 10px; height: 10px; border-radius: 5px; margin: 2px; }
+    .card-wrap { height: 260px; }
+    .ctrl-btn { padding: 6px 14px; font-size: 12px; min-height: 36px; }
+    .vocab-table td { padding: 12px 8px; }
+    .vocab-char { font-size: 20px; width: 64px; }
+    .vocab-pinyin { width: 90px; }
+    .srs-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .mode-tab { padding: 7px 10px; font-size: 11px; }
+  }
+  @media (max-width: 380px) {
+    .card-wrap { height: 230px; }
+    .nav-count { font-size: 12px; min-width: 48px; }
+    .mark-btn { padding: 8px 10px; font-size: 11px; }
+    .pill { padding: 7px 10px; font-size: 11px; }
+  }
+  @media (hover: none) { .hint { display: none; } }
+  .card-wrap, .nav, .dots, .pill, .sec-btn, .ctrl-btn, .mode-tab, .mark-btn {
+    -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none;
+  }
+  .card-wrap.swiping .card-inner { transition: none; }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>GCSE 中文</h1>
+      <p class="sub">Flashcards</p>
+    </div>
+    <div class="header-actions">
+      <div class="count" id="learnCount"></div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark mode" title="Toggle light and dark mode">🌙</button>
+    </div>
+  </div>
+
+  <div class="mode-tabs" id="modeTabs">
+    <button class="mode-tab" data-mode="review">Review</button>
+    <button class="mode-tab" data-mode="cards">Browse</button>
+    <button class="mode-tab" data-mode="list">Vocab</button>
+  </div>
+
+  <div class="pills" id="topicPills"></div>
+
+  <!-- SRS Review Dashboard -->
+  <div id="srsView" class="srs-dashboard hidden"></div>
+
+  <!-- Flashcard view -->
+  <div id="flashcardView">
+    <div class="sections" id="sectionBtns"></div>
+    <div class="controls">
+      <button class="ctrl-btn" id="shuffleBtn">⟳ Shuffle</button>
+      <button class="ctrl-btn" id="dirBtn">EN→中</button>
+      <span class="hint" id="kbHint">Space to flip · arrows to navigate</span>
+    </div>
+    <div class="progress-bar" id="progBar"><div class="progress-fill" id="progFill"></div></div>
+    <div class="card-wrap" id="cardWrap">
+      <div class="card-inner" id="cardInner">
+        <div class="card-face card-front" id="cardFront"></div>
+        <div class="card-face card-back" id="cardBack"></div>
+      </div>
+      <button class="fs-toggle" id="fullscreenBtn" type="button" aria-label="Enter fullscreen mode" title="Enter fullscreen mode"></button>
+    </div>
+    <div id="roundComplete" class="round-complete hidden"></div>
+
+    <!-- SRS grading buttons (shown during review/learn sessions) -->
+    <div id="srsGradeSection" class="hidden">
+      <div class="srs-review-info" id="srsReviewInfo"></div>
+      <div class="srs-grade-btns" id="srsGradeBtns"></div>
+    </div>
+
+    <div class="nav" id="flashcardNav">
+      <button class="nav-arrow" id="prevBtn">←</button>
+      <button class="mark-btn mark-learn" id="learnBtn">Still learning</button>
+      <span class="nav-count" id="navCount"></span>
+      <button class="mark-btn mark-got" id="gotBtn">Got it!</button>
+      <button class="nav-arrow" id="nextBtn">→</button>
+    </div>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <!-- Vocab list view -->
+  <div id="vocabView" class="hidden"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════
+const topics=[{name:"Core Basics",sections:[{label:"Core verbs",items:[{c:"是",p:"shì",e:"to be"},{c:"有",p:"yǒu",e:"to have"},{c:"在",p:"zài",e:"at/to be at"},{c:"做",p:"zuò",e:"to do"},{c:"说",p:"shuō",e:"to speak"},{c:"去",p:"qù",e:"to go"},{c:"来",p:"lái",e:"to come"},{c:"用",p:"yòng",e:"to use"},{c:"要",p:"yào",e:"to want/need"},{c:"想",p:"xiǎng",e:"to think/want"},{c:"能",p:"néng",e:"can"},{c:"会",p:"huì",e:"can/will"},{c:"可以",p:"kěyǐ",e:"may/can"},{c:"应该",p:"yīnggāi",e:"should"},{c:"需要",p:"xūyào",e:"to need"},{c:"觉得",p:"juéde",e:"to feel/think"},{c:"认为",p:"rènwéi",e:"to think/believe"},{c:"希望",p:"xīwàng",e:"to hope"},{c:"喜欢",p:"xǐhuān",e:"to like"},{c:"知道",p:"zhīdào",e:"to know"}]},{label:"Pronouns & particles",items:[{c:"我",p:"wǒ",e:"I/me"},{c:"你",p:"nǐ",e:"you"},{c:"他",p:"tā",e:"he/him"},{c:"她",p:"tā",e:"she/her"},{c:"我们",p:"wǒmen",e:"we/us"},{c:"他们",p:"tāmen",e:"they"},{c:"的",p:"de",e:"(possessive)"},{c:"了",p:"le",e:"(completion)"},{c:"着",p:"zhe",e:"(ongoing)"},{c:"过",p:"guò",e:"(exp. marker)"},{c:"吗",p:"ma",e:"(question)"},{c:"都",p:"dōu",e:"all/both"},{c:"也",p:"yě",e:"also"},{c:"还",p:"hái",e:"still/also"},{c:"只",p:"zhǐ",e:"only"}]},{label:"Time words",items:[{c:"今天",p:"jīntiān",e:"today"},{c:"明天",p:"míngtiān",e:"tomorrow"},{c:"昨天",p:"zuótiān",e:"yesterday"},{c:"现在",p:"xiànzài",e:"now"},{c:"以前",p:"yǐqián",e:"before/past"},{c:"以后",p:"yǐhòu",e:"after/future"},{c:"将来",p:"jiānglái",e:"in the future"},{c:"已经",p:"yǐjīng",e:"already"},{c:"经常",p:"jīngcháng",e:"often"},{c:"有时",p:"yǒushí",e:"sometimes"},{c:"每天",p:"měitiān",e:"every day"},{c:"最近",p:"zuìjìn",e:"recently"},{c:"马上",p:"mǎshàng",e:"immediately"}]},{label:"Connectives",items:[{c:"因为",p:"yīnwèi",e:"because"},{c:"所以",p:"suǒyǐ",e:"therefore"},{c:"但是",p:"dànshì",e:"but"},{c:"虽然",p:"suīrán",e:"although"},{c:"而且",p:"érqiě",e:"moreover"},{c:"如果",p:"rúguǒ",e:"if"},{c:"就",p:"jiù",e:"then (result)"},{c:"不过",p:"búguò",e:"however"},{c:"另外",p:"lìngwài",e:"in addition"},{c:"其实",p:"qíshí",e:"actually"},{c:"为了",p:"wèile",e:"in order to"}]},{label:"Degree & frequency",items:[{c:"非常",p:"fēicháng",e:"extremely"},{c:"很",p:"hěn",e:"very"},{c:"太",p:"tài",e:"too (excessive)"},{c:"更",p:"gèng",e:"even more"},{c:"最",p:"zuì",e:"most"},{c:"比较",p:"bǐjiào",e:"relatively"},{c:"有点",p:"yǒudiǎn",e:"a bit"},{c:"真的",p:"zhēnde",e:"really"},{c:"总是",p:"zǒngshì",e:"always"},{c:"从不",p:"cóng bù",e:"never"},{c:"又",p:"yòu",e:"again"},{c:"再",p:"zài",e:"again (future)"}]},{label:"Opinion phrases",items:[{c:"我认为",p:"wǒ rènwéi",e:"I think/believe"},{c:"我觉得",p:"wǒ juéde",e:"I feel/think"},{c:"我同意",p:"wǒ tóngyì",e:"I agree"},{c:"我希望",p:"wǒ xīwàng",e:"I hope"},{c:"重要",p:"zhòngyào",e:"important"},{c:"有用",p:"yǒuyòng",e:"useful"},{c:"有趣",p:"yǒuqù",e:"interesting"},{c:"方便",p:"fāngbiàn",e:"convenient"},{c:"有害",p:"yǒuhài",e:"harmful"},{c:"必要",p:"bìyào",e:"necessary"}]},{label:"Question words",items:[{c:"什么",p:"shénme",e:"what"},{c:"哪里",p:"nǎlǐ",e:"where"},{c:"为什么",p:"wèishénme",e:"why"},{c:"怎么",p:"zěnme",e:"how"},{c:"怎么样",p:"zěnmeyàng",e:"how is it"},{c:"多少",p:"duōshao",e:"how much/many"},{c:"什么时候",p:"shénme shíhou",e:"when"}]}]},{name:"My Life",sections:[{label:"People & relationships",items:[{c:"家人",p:"jiārén",e:"family"},{c:"父母",p:"fùmǔ",e:"parents"},{c:"朋友",p:"péngyou",e:"friend"},{c:"哥哥",p:"gēge",e:"older brother"},{c:"姐姐",p:"jiějie",e:"older sister"},{c:"弟弟",p:"dìdi",e:"younger brother"},{c:"妹妹",p:"mèimei",e:"younger sister"}]},{label:"Likes, dislikes & personality",items:[{c:"喜欢",p:"xǐhuān",e:"to like"},{c:"爱好",p:"àihào",e:"hobby"},{c:"性格",p:"xìnggé",e:"personality"},{c:"友好",p:"yǒuhǎo",e:"friendly"},{c:"开心",p:"kāixīn",e:"happy"},{c:"有趣",p:"yǒuqù",e:"interesting/fun"}]},{label:"Childhood & change",items:[{c:"小时候",p:"xiǎoshíhou",e:"when young"},{c:"长大",p:"zhǎngdà",e:"to grow up"},{c:"变化",p:"biànhuà",e:"change"},{c:"以前",p:"yǐqián",e:"in the past"},{c:"现在",p:"xiànzài",e:"now"}]}]},{name:"School",sections:[{label:"School basics",items:[{c:"学校",p:"xuéxiào",e:"school"},{c:"老师",p:"lǎoshī",e:"teacher"},{c:"同学",p:"tóngxué",e:"classmate"},{c:"上课",p:"shàngkè",e:"attend class"},{c:"下课",p:"xiàkè",e:"class ends"},{c:"作业",p:"zuòyè",e:"homework"},{c:"考试",p:"kǎoshì",e:"exam"}]},{label:"Opinions on school",items:[{c:"成绩",p:"chéngjì",e:"grades/results"},{c:"压力",p:"yālì",e:"pressure/stress"},{c:"努力",p:"nǔlì",e:"to work hard"},{c:"应该",p:"yīnggāi",e:"should"},{c:"必须",p:"bìxū",e:"must"},{c:"规定",p:"guīdìng",e:"rule"}]},{label:"Comparing schools",items:[{c:"比较",p:"bǐjiào",e:"to compare"},{c:"不同",p:"bùtóng",e:"different"},{c:"相同",p:"xiāngtóng",e:"the same"},{c:"制服",p:"zhìfú",e:"uniform"}]}]},{name:"Leisure",sections:[{label:"Sports & exercise",items:[{c:"运动",p:"yùndòng",e:"sport/exercise"},{c:"锻炼",p:"duànliàn",e:"to work out"},{c:"健康",p:"jiànkāng",e:"healthy"},{c:"游泳",p:"yóuyǒng",e:"to swim"},{c:"跑步",p:"pǎobù",e:"to run"}]},{label:"Hobbies & free time",items:[{c:"爱好",p:"àihào",e:"hobby"},{c:"音乐",p:"yīnyuè",e:"music"},{c:"看书",p:"kànshū",e:"to read"},{c:"画画",p:"huàhuà",e:"to draw"},{c:"唱歌",p:"chànggē",e:"to sing"},{c:"跳舞",p:"tiàowǔ",e:"to dance"}]},{label:"Socialising",items:[{c:"一起",p:"yīqǐ",e:"together"},{c:"聊天",p:"liáotiān",e:"to chat"},{c:"出去",p:"chūqù",e:"to go out"},{c:"每周",p:"měizhōu",e:"every week"}]}]},{name:"Media",sections:[{label:"Technology & internet",items:[{c:"手机",p:"shǒujī",e:"mobile phone"},{c:"上网",p:"shàngwǎng",e:"to go online"},{c:"网络",p:"wǎngluò",e:"internet"},{c:"电脑",p:"diànnǎo",e:"computer"},{c:"社交",p:"shèjiāo",e:"social"}]},{label:"TV, film & music",items:[{c:"电视",p:"diànshì",e:"TV"},{c:"电影",p:"diànyǐng",e:"film"},{c:"音乐",p:"yīnyuè",e:"music"},{c:"节目",p:"jiémù",e:"programme"},{c:"明星",p:"míngxīng",e:"celebrity"},{c:"偶像",p:"ǒuxiàng",e:"idol/role model"}]},{label:"Opinions on media",items:[{c:"有用",p:"yǒuyòng",e:"useful"},{c:"有害",p:"yǒuhài",e:"harmful"},{c:"影响",p:"yǐngxiǎng",e:"influence"},{c:"好处",p:"hǎochù",e:"benefit"},{c:"坏处",p:"huàichù",e:"drawback"}]}]},{name:"Where I Live",sections:[{label:"Places in town",items:[{c:"城市",p:"chéngshì",e:"city"},{c:"农村",p:"nóngcūn",e:"countryside"},{c:"超市",p:"chāoshì",e:"supermarket"},{c:"医院",p:"yīyuàn",e:"hospital"},{c:"公园",p:"gōngyuán",e:"park"},{c:"附近",p:"fùjìn",e:"nearby"}]},{label:"Directions & transport",items:[{c:"左边",p:"zuǒbiān",e:"left"},{c:"右边",p:"yòubiān",e:"right"},{c:"前面",p:"qiánmiàn",e:"in front"},{c:"后面",p:"hòumiàn",e:"behind"},{c:"地铁",p:"dìtiě",e:"subway/metro"}]},{label:"Environment",items:[{c:"环境",p:"huánjìng",e:"environment"},{c:"污染",p:"wūrǎn",e:"pollution"},{c:"保护",p:"bǎohù",e:"to protect"},{c:"回收",p:"huíshōu",e:"to recycle"},{c:"方便",p:"fāngbiàn",e:"convenient"}]}]},{name:"Holidays",sections:[{label:"Transport & travel",items:[{c:"飞机",p:"fēijī",e:"plane"},{c:"火车",p:"huǒchē",e:"train"},{c:"旅行",p:"lǚxíng",e:"to travel"},{c:"出发",p:"chūfā",e:"to set off"},{c:"到达",p:"dàodá",e:"to arrive"}]},{label:"Holiday activities",items:[{c:"参观",p:"cānguān",e:"to visit (place)"},{c:"拍照",p:"pāizhào",e:"to take photos"},{c:"购物",p:"gòuwù",e:"to shop"},{c:"天气",p:"tiānqì",e:"weather"},{c:"海边",p:"hǎibiān",e:"seaside"},{c:"山",p:"shān",e:"mountain"}]},{label:"Past & future",items:[{c:"去过",p:"qùguò",e:"have been to"},{c:"打算",p:"dǎsuàn",e:"to plan to"},{c:"希望",p:"xīwàng",e:"to hope"},{c:"难忘",p:"nánwàng",e:"unforgettable"},{c:"经历",p:"jīnglì",e:"experience"}]}]},{name:"Food & Drink",sections:[{label:"Food basics",items:[{c:"米饭",p:"mǐfàn",e:"rice"},{c:"面条",p:"miàntiáo",e:"noodles"},{c:"蔬菜",p:"shūcài",e:"vegetables"},{c:"水果",p:"shuǐguǒ",e:"fruit"},{c:"肉",p:"ròu",e:"meat"},{c:"鱼",p:"yú",e:"fish"}]},{label:"Eating out",items:[{c:"餐厅",p:"cāntīng",e:"restaurant"},{c:"点菜",p:"diǎncài",e:"to order food"},{c:"好吃",p:"hǎochī",e:"delicious"},{c:"味道",p:"wèidào",e:"taste/flavour"},{c:"服务",p:"fúwù",e:"service"}]},{label:"Health & meals",items:[{c:"健康",p:"jiànkāng",e:"healthy"},{c:"身体",p:"shēntǐ",e:"body/health"},{c:"习惯",p:"xíguàn",e:"habit"},{c:"早饭",p:"zǎofàn",e:"breakfast"},{c:"午饭",p:"wǔfàn",e:"lunch"},{c:"晚饭",p:"wǎnfàn",e:"dinner"}]}]},{name:"Work",sections:[{label:"Jobs",items:[{c:"工作",p:"gōngzuò",e:"work/job"},{c:"职业",p:"zhíyè",e:"career"},{c:"医生",p:"yīshēng",e:"doctor"},{c:"老师",p:"lǎoshī",e:"teacher"},{c:"商人",p:"shāngrén",e:"businessman"}]},{label:"Future plans",items:[{c:"未来",p:"wèilái",e:"future"},{c:"打算",p:"dǎsuàn",e:"to plan to"},{c:"理想",p:"lǐxiǎng",e:"ideal/dream"},{c:"大学",p:"dàxué",e:"university"},{c:"赚钱",p:"zhuànqián",e:"to earn money"},{c:"成功",p:"chénggōng",e:"success"}]},{label:"Work values",items:[{c:"经验",p:"jīngyàn",e:"experience"},{c:"志愿者",p:"zhìyuànzhě",e:"volunteer"},{c:"帮助",p:"bāngzhù",e:"to help"},{c:"重要",p:"zhòngyào",e:"important"},{c:"机会",p:"jīhuì",e:"opportunity"}]}]}];
+
+// ══════════════════════════════════════════════════════════
+// SRS ENGINE
+// ══════════════════════════════════════════════════════════
+const SRS_KEY = 'gcse_chinese_srs';
+const SRS_HISTORY_KEY = 'gcse_chinese_srs_history';
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function daysBetween(dateStr1, dateStr2) {
+  const d1 = new Date(dateStr1 + 'T00:00:00');
+  const d2 = new Date(dateStr2 + 'T00:00:00');
+  return Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+}
+
+function addDays(dateStr, days) {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + days);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// Global card key (unique per character+pinyin+english, ignoring topic)
+function srsKey(item) {
+  return `${item.c}|${item.p}|${item.e}`;
+}
+
+function loadSRS() {
+  try { return JSON.parse(localStorage.getItem(SRS_KEY)) || {}; } catch { return {}; }
+}
+function saveSRS(data) {
+  localStorage.setItem(SRS_KEY, JSON.stringify(data));
+}
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(SRS_HISTORY_KEY)) || {}; } catch { return {}; }
+}
+function saveHistory(data) {
+  localStorage.setItem(SRS_HISTORY_KEY, JSON.stringify(data));
+}
+
+function recordStudyDay(newCount, reviewCount) {
+  const hist = loadHistory();
+  const today = todayStr();
+  if (!hist[today]) hist[today] = { newLearned: 0, reviewed: 0 };
+  hist[today].newLearned += newCount;
+  hist[today].reviewed += reviewCount;
+  saveHistory(hist);
+}
+
+// Get all unique cards across all topics
+function getAllCards() {
+  const seen = new Set();
+  const cards = [];
+  topics.forEach((topic, ti) => {
+    topic.sections.forEach(sec => {
+      sec.items.forEach(item => {
+        const key = srsKey(item);
+        if (!seen.has(key)) {
+          seen.add(key);
+          cards.push({ ...item, section: sec.label, topicName: topic.name });
+        }
+      });
+    });
+  });
+  return cards;
+}
+
+function getDueCards() {
+  const srs = loadSRS();
+  const known = loadKnown();
+  const today = todayStr();
+  const all = getAllCards();
+  return all.filter(card => {
+    const key = srsKey(card);
+    if (known[key]) return false;
+    const data = srs[key];
+    return data && data.nextReview && data.nextReview <= today;
+  });
+}
+
+function getNewCards() {
+  const srs = loadSRS();
+  const known = loadKnown();
+  const all = getAllCards();
+  return all.filter(card => {
+    const key = srsKey(card);
+    return !srs[key] && !known[key];
+  });
+}
+
+function getLearnedCount() {
+  const srs = loadSRS();
+  const known = loadKnown();
+  // Cards actively in SRS (not permanently known)
+  return Object.keys(srs).filter(k => !known[k]).length;
+}
+
+function getKnownCount() {
+  return Object.keys(loadKnown()).length;
+}
+
+// Permanently known cards
+const SRS_KNOWN_KEY = 'gcse_chinese_known';
+
+function loadKnown() {
+  try { return JSON.parse(localStorage.getItem(SRS_KNOWN_KEY)) || {}; } catch { return {}; }
+}
+function saveKnown(data) {
+  localStorage.setItem(SRS_KNOWN_KEY, JSON.stringify(data));
+}
+
+function markCardKnown(item) {
+  const known = loadKnown();
+  known[srsKey(item)] = true;
+  saveKnown(known);
+  // Also remove from SRS schedule
+  const srs = loadSRS();
+  delete srs[srsKey(item)];
+  saveSRS(srs);
+}
+
+function unmarkCardKnown(item) {
+  const known = loadKnown();
+  delete known[srsKey(item)];
+  saveKnown(known);
+}
+
+function gradeCard(item, quality) {
+  // quality: 'again' (forgot), 'hard', 'good', 'easy'
+  const srs = loadSRS();
+  const key = srsKey(item);
+  let data = srs[key] || { interval: 0, ease: 2.5, nextReview: todayStr(), reps: 0 };
+
+  const today = todayStr();
+
+  if (quality === 'again') {
+    data.interval = 1;
+    data.ease = Math.max(1.3, data.ease - 0.2);
+    data.reps = 0;
+  } else if (quality === 'hard') {
+    if (data.reps === 0) {
+      data.interval = 2;
+    } else {
+      data.interval = Math.max(1, Math.round(data.interval * 1.2));
+    }
+    data.ease = Math.max(1.3, data.ease - 0.15);
+    data.reps++;
+  } else if (quality === 'good') {
+    if (data.reps === 0) {
+      data.interval = 3;
+    } else if (data.reps === 1) {
+      data.interval = 7;
+    } else {
+      data.interval = Math.round(data.interval * data.ease);
+    }
+    data.reps++;
+  } else if (quality === 'easy') {
+    if (data.reps === 0) {
+      data.interval = 7;
+    } else {
+      data.interval = Math.round(data.interval * data.ease * 1.3);
+    }
+    data.ease += 0.15;
+    data.reps++;
+  }
+
+  data.nextReview = addDays(today, data.interval);
+  data.lastReview = today;
+  srs[key] = data;
+  saveSRS(srs);
+  return data;
+}
+
+function getNextIntervalPreview(item, quality) {
+  const srs = loadSRS();
+  const key = srsKey(item);
+  let data = srs[key] || { interval: 0, ease: 2.5, reps: 0 };
+  let interval;
+
+  if (quality === 'again') interval = 1;
+  else if (quality === 'hard') interval = data.reps === 0 ? 2 : Math.max(1, Math.round(data.interval * 1.2));
+  else if (quality === 'good') {
+    if (data.reps === 0) interval = 3;
+    else if (data.reps === 1) interval = 7;
+    else interval = Math.round(data.interval * data.ease);
+  } else {
+    if (data.reps === 0) interval = 7;
+    else interval = Math.round(data.interval * data.ease * 1.3);
+  }
+  return interval;
+}
+
+function formatInterval(days) {
+  if (days === 1) return '1d';
+  if (days < 7) return days + 'd';
+  if (days < 30) return Math.round(days / 7) + 'w';
+  return Math.round(days / 30) + 'mo';
+}
+
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+const THEMES={
+  light:{bg:'#f3f4f6',surface:'#ffffff',surface2:'#f8fafc',surface3:'#eef2f7',text:'#1f2937',textSoft:'#6b7280',textFaint:'#9ca3af',border:'#d1d5db',borderSoft:'#e5e7eb',blue:'#2563eb',blueSoft:'#dbeafe',blueDeep:'#1d4ed8',blueBorder:'#bfdbfe',knownDot:'#93c5fd',shadow:'0 12px 28px rgba(15, 23, 42, 0.08)'},
+  dark:{bg:'#0f172a',surface:'#111827',surface2:'#1f2937',surface3:'#273449',text:'#e5e7eb',textSoft:'#cbd5e1',textFaint:'#94a3b8',border:'#475569',borderSoft:'#334155',blue:'#60a5fa',blueSoft:'rgba(96, 165, 250, 0.16)',blueDeep:'#93c5fd',blueBorder:'rgba(147, 197, 253, 0.38)',knownDot:'#60a5fa',shadow:'0 14px 34px rgba(2, 6, 23, 0.4)'}
+};
+
+const initialTheme = (() => {
+  const saved = localStorage.getItem('gcseFlashcardsTheme');
+  if (saved === 'light' || saved === 'dark') return saved;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+})();
+
+let state = {
+  topicIdx: 0,
+  sectionIdx: null,
+  cardIdx: 0,
+  flipped: false,
+  known: {},
+  shuffled: false,
+  direction: "en-zh",
+  cards: [],
+  mode: "review", // 'review', 'cards', 'list'
+  theme: initialTheme,
+  fullscreen: false,
+  roundResults: {},
+  roundComplete: false,
+  retryCards: [],
+  roundNumber: 1,
+  // SRS session state
+  srsSession: null, // null | 'review' | 'learn'
+  srsSessionCards: [],
+  srsSessionIdx: 0,
+  srsSessionResults: [],
+  newCardsCount: 10,
+  srsDirection: "en-zh", // default EN→中 for review sessions
+  srsSessionOriginalCount: 0,
+};
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function getCardKey(card) {
+  return `${state.topicIdx}::${card.section || ''}::${card.c}::${card.p}::${card.e}`;
+}
+
+function getSelectedItems() {
+  const topic = topics[state.topicIdx];
+  let items = [];
+  if (state.sectionIdx === null) {
+    topic.sections.forEach(section => section.items.forEach(item => items.push({...item, section: section.label})));
+  } else {
+    topic.sections[state.sectionIdx].items.forEach(item => items.push({...item, section: topic.sections[state.sectionIdx].label}));
+  }
+  return items;
+}
+
+function startRound(items, roundNumber = 1) {
+  const roundItems = [...items];
+  state.cards = state.shuffled ? shuffle(roundItems) : roundItems;
+  state.cardIdx = 0;
+  state.flipped = false;
+  state.roundResults = {};
+  state.roundComplete = false;
+  state.retryCards = [];
+  state.roundNumber = roundNumber;
+}
+
+function buildCards() {
+  startRound(getSelectedItems(), 1);
+}
+
+function finishRound() {
+  state.retryCards = state.cards.filter(card => state.roundResults[getCardKey(card)] !== 'got');
+  state.roundComplete = true;
+  state.flipped = false;
+}
+
+function handleAnswer(result) {
+  const card = state.cards[state.cardIdx];
+  if (!card) return;
+  const key = getCardKey(card);
+  if (result === 'got') {
+    state.known[key] = true;
+  } else {
+    delete state.known[key];
+  }
+  state.roundResults[key] = result;
+
+  if (state.cardIdx < state.cards.length - 1) {
+    switchToCard(state.cardIdx + 1);
+  } else {
+    finishRound();
+    render();
+  }
+}
+
+function redoStillLearning() {
+  if (!state.retryCards.length) return;
+  startRound(state.retryCards, state.roundNumber + 1);
+  render();
+}
+
+function restartSet() {
+  buildCards();
+  render();
+}
+
+function color() { return THEMES[state.theme]; }
+
+// Suppress flip animation when changing cards (not when flipping)
+function skipFlipAnimation() {}
+
+function switchToCard(nextIdx, beforeSwitch) {
+  if (typeof beforeSwitch === 'function') beforeSwitch();
+  state.cardIdx = nextIdx;
+  state.flipped = false;
+  render();
+}
+
+
+// ══════════════════════════════════════════════════════════
+// SRS SESSION MANAGEMENT
+// ══════════════════════════════════════════════════════════
+function startSRSReview() {
+  const due = getDueCards();
+  if (due.length === 0) return;
+  state.srsSession = 'review';
+  state.srsSessionCards = shuffle(due);
+  state.srsSessionIdx = 0;
+  state.srsSessionResults = [];
+  state.srsSessionOriginalCount = due.length;
+  state.flipped = false;
+  state.mode = 'review';
+
+  state.cards = state.srsSessionCards;
+  state.cardIdx = 0;
+  state.roundComplete = false;
+  render();
+}
+
+function startSRSLearn(count) {
+  const newCards = getNewCards();
+  if (newCards.length === 0) return;
+  const batch = newCards.slice(0, count);
+  state.srsSession = 'learn';
+  state.srsSessionCards = batch;
+  state.srsSessionIdx = 0;
+  state.srsSessionResults = [];
+  state.srsSessionOriginalCount = batch.length;
+  state.flipped = false;
+  state.mode = 'review';
+
+  state.cards = state.srsSessionCards;
+  state.cardIdx = 0;
+  state.roundComplete = false;
+  render();
+}
+
+function handleSRSGrade(quality) {
+  const card = state.srsSessionCards[state.srsSessionIdx];
+  if (!card) return;
+
+  if (quality === 'known') {
+    markCardKnown(card);
+    state.srsSessionResults.push({ card, quality: 'known', result: { known: true } });
+  } else if (quality === 'again') {
+    // Grade it (sets interval to 1 day for next time)
+    const result = gradeCard(card, quality);
+    state.srsSessionResults.push({ card, quality, result });
+    // Re-queue at end of session so they see it again before finishing
+    state.srsSessionCards.push({ ...card });
+
+    if (state.srsSession === 'learn') {
+      recordStudyDay(1, 0);
+    } else {
+      recordStudyDay(0, 1);
+    }
+  } else {
+    const result = gradeCard(card, quality);
+    state.srsSessionResults.push({ card, quality, result });
+
+    if (state.srsSession === 'learn') {
+      recordStudyDay(1, 0);
+    } else {
+      recordStudyDay(0, 1);
+    }
+  }
+
+  if (state.srsSessionIdx < state.srsSessionCards.length - 1) {
+    const nextIdx = state.srsSessionIdx + 1;
+    switchToCard(nextIdx, () => {
+      state.srsSessionIdx = nextIdx;
+    });
+  } else {
+    finishSRSSession();
+    render();
+  }
+}
+
+function finishSRSSession() {
+  state.roundComplete = true;
+  state.flipped = false;
+}
+
+function exitSRSSession() {
+  state.srsSession = null;
+  state.srsSessionCards = [];
+  state.srsSessionIdx = 0;
+  state.srsSessionResults = [];
+  state.srsSessionOriginalCount = 0;
+  state.roundComplete = false;
+  render();
+}
+
+
+// ══════════════════════════════════════════════════════════
+// FULLSCREEN
+// ══════════════════════════════════════════════════════════
+const fullscreenIcons = {
+  enter: `<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 3 3 3 3 9"></polyline><polyline points="15 3 21 3 21 9"></polyline><polyline points="21 15 21 21 15 21"></polyline><polyline points="9 21 3 21 3 15"></polyline></svg>`,
+  exit: `<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 3 9 9 3 9"></polyline><polyline points="15 3 15 9 21 9"></polyline><polyline points="21 15 15 15 15 21"></polyline><polyline points="9 21 9 15 3 15"></polyline></svg>`
+};
+
+function syncFullscreenUI() {
+  document.body.classList.toggle('fullscreen-active', state.fullscreen && (state.mode === 'cards' || state.srsSession));
+  const btn = document.getElementById('fullscreenBtn');
+  if (btn) {
+    const active = state.fullscreen;
+    btn.innerHTML = active ? fullscreenIcons.exit : fullscreenIcons.enter;
+    btn.setAttribute('aria-label', active ? 'Exit fullscreen mode' : 'Enter fullscreen mode');
+    btn.setAttribute('title', active ? 'Exit fullscreen mode' : 'Enter fullscreen mode');
+  }
+}
+
+function enterFullscreenMode() {
+  state.fullscreen = true;
+  syncFullscreenUI();
+  if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+  render();
+}
+
+function exitFullscreenMode() {
+  state.fullscreen = false;
+  syncFullscreenUI();
+  if (document.fullscreenElement && document.exitFullscreen) {
+    document.exitFullscreen().catch(() => {});
+  }
+  render();
+}
+
+function toggleFullscreenMode() {
+  if (state.fullscreen) exitFullscreenMode();
+  else enterFullscreenMode();
+}
+
+
+// ══════════════════════════════════════════════════════════
+// THEME
+// ══════════════════════════════════════════════════════════
+function applyTheme() {
+  document.documentElement.dataset.theme = state.theme;
+  const toggle = document.getElementById('themeToggle');
+  if (toggle) {
+    const dark = state.theme === 'dark';
+    toggle.textContent = dark ? '☀️' : '🌙';
+    toggle.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    toggle.setAttribute('title', dark ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  localStorage.setItem('gcseFlashcardsTheme', state.theme);
+}
+
+
+// ══════════════════════════════════════════════════════════
+// RENDER: SRS DASHBOARD
+// ══════════════════════════════════════════════════════════
+function renderSRSDashboard() {
+  const c = color();
+  const dueCards = getDueCards();
+  const newCards = getNewCards();
+  const learnedCount = getLearnedCount();
+  const totalCards = getAllCards().length;
+  const hist = loadHistory();
+  const today = todayStr();
+
+  // Streak calculation
+  let streak = 0;
+  let checkDate = today;
+  for (let i = 0; i < 365; i++) {
+    if (hist[checkDate]) {
+      streak++;
+      checkDate = addDays(checkDate, -1);
+    } else {
+      break;
+    }
+  }
+
+  // Last 7 days
+  const last7 = [];
+  const dayLabels = ['S','M','T','W','T','F','S'];
+  for (let i = 6; i >= 0; i--) {
+    const d = addDays(today, -i);
+    const dayOfWeek = new Date(d + 'T00:00:00').getDay();
+    last7.push({
+      date: d,
+      label: dayLabels[dayOfWeek],
+      active: !!hist[d],
+      isToday: d === today
+    });
+  }
+
+  const knownCount = getKnownCount();
+
+  let html = '';
+
+  // Stats row
+  html += `<div class="srs-stats" style="grid-template-columns:repeat(4,1fr)">
+    <div class="srs-stat">
+      <div class="srs-stat-num" style="color:var(--amber)">${dueCards.length}</div>
+      <div class="srs-stat-label">Due</div>
+    </div>
+    <div class="srs-stat">
+      <div class="srs-stat-num" style="color:var(--green)">${learnedCount}</div>
+      <div class="srs-stat-label">Learning</div>
+    </div>
+    <div class="srs-stat">
+      <div class="srs-stat-num" style="color:var(--text-faint)">${knownCount}</div>
+      <div class="srs-stat-label">Known</div>
+    </div>
+    <div class="srs-stat">
+      <div class="srs-stat-num" style="color:var(--blue)">${totalCards - learnedCount - knownCount}</div>
+      <div class="srs-stat-label">Unseen</div>
+    </div>
+  </div>`;
+
+  // Streak
+  html += `<div class="srs-streak">
+    <div class="srs-streak-title">${streak > 0 ? streak + ' day streak' : 'No streak yet'}</div>
+    <div class="srs-streak-days">
+      ${last7.map(d => `<div class="srs-streak-dot" style="
+        background:${d.active ? 'var(--green-soft)' : 'var(--surface-2)'};
+        border-color:${d.isToday ? 'var(--blue-border)' : (d.active ? 'var(--green-border)' : 'var(--border-soft)')};
+        color:${d.active ? 'var(--green-deep)' : 'var(--text-faint)'}
+      ">${d.label}</div>`).join('')}
+    </div>
+  </div>`;
+
+  // Direction toggle
+  const dirEnZh = state.srsDirection === 'en-zh';
+  html += `<div style="display:flex;gap:0;margin-bottom:16px;border-radius:12px;overflow:hidden;width:fit-content;background:var(--surface);border:1px solid var(--border-soft);box-shadow:0 2px 10px rgba(15,23,42,0.04)">
+    <button id="srsDirEnZh" style="padding:7px 16px;font-size:12px;font-weight:500;border:none;background:${dirEnZh ? 'var(--blue-soft)' : 'transparent'};color:${dirEnZh ? 'var(--blue-deep)' : 'var(--text-soft)'};cursor:pointer;transition:all 0.2s;letter-spacing:0.5px">EN → 中</button>
+    <button id="srsDirZhEn" style="padding:7px 16px;font-size:12px;font-weight:500;border:none;background:${!dirEnZh ? 'var(--blue-soft)' : 'transparent'};color:${!dirEnZh ? 'var(--blue-deep)' : 'var(--text-soft)'};cursor:pointer;transition:all 0.2s;letter-spacing:0.5px">中 → EN</button>
+  </div>`;
+
+  // Action cards
+  html += `<div class="srs-action-card ${dueCards.length === 0 ? 'disabled' : ''}" id="startReviewBtn">
+    <div class="srs-action-badge" style="background:var(--amber-soft);color:var(--amber-deep);border:1px solid var(--amber-border)">${dueCards.length} due</div>
+    <div class="srs-action-title">Review due cards</div>
+    <div class="srs-action-desc">${dueCards.length === 0 ? 'No cards due for review right now. Come back later!' : 'Go through cards that are scheduled for review today.'}</div>
+  </div>`;
+
+  html += `<div class="srs-action-card ${newCards.length === 0 ? 'disabled' : ''}" id="startLearnBtn">
+    <div class="srs-action-badge" style="background:var(--blue-soft);color:var(--blue-deep);border:1px solid var(--blue-border)">${newCards.length} available</div>
+    <div class="srs-action-title">Learn new characters</div>
+    <div class="srs-action-desc">${newCards.length === 0 ? 'You\'ve seen every card! Keep reviewing to lock them in.' : 'Pick how many new characters to add to your review pile.'}</div>
+  </div>`;
+
+  // New cards picker (hidden by default, shown on click)
+  html += `<div id="newCardsPicker" class="new-cards-picker hidden">
+    <div style="text-align:center;font-size:12px;color:var(--text-soft);margin-bottom:4px;">How many new characters?</div>
+    <div class="new-cards-slider-wrap">
+      <input type="range" class="new-cards-slider" id="newCardsSlider" min="1" max="${Math.min(newCards.length, 30)}" value="${Math.min(state.newCardsCount, newCards.length)}">
+      <div class="new-cards-num" id="newCardsNum">${Math.min(state.newCardsCount, newCards.length)}</div>
+    </div>
+    <button class="new-cards-start" id="confirmLearnBtn">Start learning</button>
+  </div>`;
+
+  // Today's progress
+  const todayHist = hist[today];
+  if (todayHist) {
+    html += `<div style="text-align:center;font-size:11px;color:var(--text-faint);margin-top:12px;letter-spacing:1px;">
+      Today: ${todayHist.newLearned} new · ${todayHist.reviewed} reviewed
+    </div>`;
+  }
+
+  document.getElementById("srsView").innerHTML = html;
+
+  // Event listeners
+  document.getElementById("startReviewBtn")?.addEventListener("click", () => {
+    if (dueCards.length > 0) startSRSReview();
+  });
+  document.getElementById("startLearnBtn")?.addEventListener("click", () => {
+    if (newCards.length > 0) {
+      document.getElementById("newCardsPicker").classList.toggle("hidden");
+    }
+  });
+  document.getElementById("newCardsSlider")?.addEventListener("input", (e) => {
+    state.newCardsCount = parseInt(e.target.value);
+    document.getElementById("newCardsNum").textContent = state.newCardsCount;
+  });
+  document.getElementById("confirmLearnBtn")?.addEventListener("click", () => {
+    startSRSLearn(state.newCardsCount);
+  });
+  document.getElementById("srsDirEnZh")?.addEventListener("click", () => {
+    state.srsDirection = 'en-zh'; render();
+  });
+  document.getElementById("srsDirZhEn")?.addEventListener("click", () => {
+    state.srsDirection = 'zh-en'; render();
+  });
+}
+
+
+// ══════════════════════════════════════════════════════════
+// RENDER: VOCAB LIST
+// ══════════════════════════════════════════════════════════
+function renderVocabList() {
+  const c = color();
+  const srs = loadSRS();
+  const known = loadKnown();
+  const topic = topics[state.topicIdx];
+  let totalItems = 0;
+  let html = '';
+  topic.sections.forEach(sec => {
+    totalItems += sec.items.length;
+    html += `<div class="vocab-section">`;
+    html += `<div class="vocab-section-label">${sec.label}</div>`;
+    html += `<table class="vocab-table">`;
+    sec.items.forEach(item => {
+      const key = srsKey(item);
+      const isKnown = known[key];
+      const data = srs[key];
+      let statusHtml = '';
+      if (isKnown) {
+        statusHtml = `<button data-unmark="${key}" style="color:var(--text-faint);font-size:9px;background:var(--surface-2);border:1px solid var(--border-soft);padding:2px 6px;border-radius:6px;cursor:pointer;font-family:inherit">known ✕</button>`;
+      } else if (data) {
+        const today = todayStr();
+        if (data.nextReview <= today) {
+          statusHtml = `<span style="color:var(--amber-deep);font-size:9px;background:var(--amber-soft);border:1px solid var(--amber-border);padding:2px 6px;border-radius:6px">due</span>`;
+        } else {
+          const daysLeft = daysBetween(today, data.nextReview);
+          statusHtml = `<span style="color:var(--green-deep);font-size:9px;background:var(--green-soft);border:1px solid var(--green-border);padding:2px 6px;border-radius:6px">${formatInterval(daysLeft)}</span>`;
+        }
+      } else {
+        statusHtml = `<span style="color:var(--text-faint);font-size:9px">new</span>`;
+      }
+      html += `<tr style="${isKnown ? 'opacity:0.5' : ''}"><td class="vocab-char">${item.c}</td><td class="vocab-pinyin">${item.p}</td><td class="vocab-eng">${item.e}</td><td style="width:56px;text-align:right">${statusHtml}</td></tr>`;
+    });
+    html += `</table></div>`;
+  });
+  html += `<div class="vocab-count">${totalItems} terms in ${topic.name}</div>`;
+  const vocabView = document.getElementById("vocabView");
+  vocabView.innerHTML = html;
+
+  // Unmark known listeners
+  vocabView.querySelectorAll('[data-unmark]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const key = btn.dataset.unmark;
+      const known = loadKnown();
+      delete known[key];
+      saveKnown(known);
+      render();
+    });
+  });
+}
+
+
+// ══════════════════════════════════════════════════════════
+// RENDER: SRS GRADE BUTTONS
+// ══════════════════════════════════════════════════════════
+function renderSRSGradeButtons() {
+  const card = state.srsSessionCards[state.srsSessionIdx];
+  if (!card) return;
+
+  const grades = ['again', 'hard', 'good', 'easy'];
+  const labels = { again: 'Again', hard: 'Hard', good: 'Good', easy: 'Easy' };
+  const colors = {
+    again: { bg: 'var(--red-soft)', border: 'var(--red-border)', text: 'var(--red)' },
+    hard: { bg: 'var(--amber-soft)', border: 'var(--amber-border)', text: 'var(--amber)' },
+    good: { bg: 'var(--green-soft)', border: 'var(--green-border)', text: 'var(--green)' },
+    easy: { bg: 'var(--blue-soft)', border: 'var(--blue-border)', text: 'var(--blue)' }
+  };
+
+  const remaining = state.srsSessionCards.length - state.srsSessionIdx;
+  document.getElementById("srsReviewInfo").textContent =
+    `${state.srsSession === 'learn' ? 'Learning' : 'Reviewing'} · ${remaining} remaining`;
+
+  document.getElementById("srsGradeBtns").innerHTML = grades.map(g => {
+    const preview = getNextIntervalPreview(card, g);
+    const col = colors[g];
+    return `<button class="srs-grade-btn" data-grade="${g}" style="background:${col.bg};border-color:${col.border};color:${col.text}">
+      ${labels[g]}
+      <span class="next-review">${formatInterval(preview)}</span>
+    </button>`;
+  }).join('') + `<button class="srs-grade-btn" data-grade="known" style="background:var(--surface-2);border-color:var(--border);color:var(--text-faint)">Known<span class="next-review">never</span></button>`;
+}
+
+
+// ══════════════════════════════════════════════════════════
+// MAIN RENDER
+// ══════════════════════════════════════════════════════════
+function render() {
+  const c = color();
+  applyTheme();
+  syncFullscreenUI();
+
+  document.body.style.background = c.bg;
+  document.body.style.color = c.text;
+
+  // Mode tabs
+  const dueCount = getDueCards().length;
+  document.querySelectorAll(".mode-tab").forEach(btn => {
+    const active = btn.dataset.mode === state.mode;
+    btn.style.background = active ? c.blueSoft : 'transparent';
+    btn.style.color = active ? c.blueDeep : c.textSoft;
+
+    // Add badge to review tab
+    if (btn.dataset.mode === 'review') {
+      const existingBadge = btn.querySelector('.tab-badge');
+      if (dueCount > 0 && !state.srsSession) {
+        if (existingBadge) {
+          existingBadge.textContent = dueCount;
+        } else {
+          const badge = document.createElement('span');
+          badge.className = 'tab-badge';
+          badge.textContent = dueCount;
+          btn.appendChild(badge);
+        }
+      } else if (existingBadge) {
+        existingBadge.remove();
+      }
+    }
+  });
+  document.querySelector(".mode-tabs").style.border = `1px solid ${c.borderSoft}`;
+
+  // Views
+  const fcView = document.getElementById("flashcardView");
+  const vView = document.getElementById("vocabView");
+  const srsView = document.getElementById("srsView");
+  const topicPills = document.getElementById("topicPills");
+  const srsGradeSection = document.getElementById("srsGradeSection");
+  const nav = document.getElementById("flashcardNav");
+
+  // Hide everything first
+  fcView.classList.add("hidden");
+  vView.classList.add("hidden");
+  srsView.classList.add("hidden");
+  topicPills.classList.add("hidden");
+  srsGradeSection.classList.add("hidden");
+  nav.classList.add("hidden");
+
+  if (state.mode === "review") {
+    if (state.srsSession) {
+      // Active SRS session — show flashcard view with SRS grading
+      fcView.classList.remove("hidden");
+      srsGradeSection.classList.remove("hidden");
+      // Hide browse-mode controls
+      document.getElementById("sectionBtns").innerHTML = '';
+      document.querySelector(".controls").classList.add("hidden");
+
+      renderSRSCards();
+    } else {
+      // Dashboard
+      srsView.classList.remove("hidden");
+      renderSRSDashboard();
+    }
+  } else if (state.mode === "cards") {
+    fcView.classList.remove("hidden");
+    topicPills.classList.remove("hidden");
+    nav.classList.remove("hidden");
+    document.querySelector(".controls").classList.remove("hidden");
+    renderBrowseMode();
+  } else if (state.mode === "list") {
+    vView.classList.remove("hidden");
+    topicPills.classList.remove("hidden");
+    renderVocabList();
+  }
+
+  // Learn count
+  if (state.mode === 'cards' || state.srsSession) {
+    const knownCount = state.cards.filter(x => state.known[getCardKey(x)]).length;
+    document.getElementById("learnCount").textContent = `${knownCount}/${state.cards.length} learned`;
+    document.getElementById("learnCount").style.display = '';
+  } else {
+    document.getElementById("learnCount").style.display = 'none';
+  }
+
+  // Topic pills (for browse and vocab modes)
+  if (state.mode === 'cards' || state.mode === 'list') {
+    document.getElementById("topicPills").innerHTML = topics.map((t, i) => `<button class="pill" data-topic="${i}" style="border:1px solid ${state.topicIdx===i?c.blueBorder:c.borderSoft};background:${state.topicIdx===i?c.blueSoft:c.surface};color:${state.topicIdx===i?c.blueDeep:c.textSoft};font-weight:${state.topicIdx===i?600:400}">${t.name}</button>`).join("");
+  }
+}
+
+
+function renderSRSCards() {
+  const c = color();
+  const card = state.srsSessionCards[state.srsSessionIdx];
+  const cardWrap = document.getElementById("cardWrap");
+  const roundComplete = document.getElementById("roundComplete");
+  const dots = document.getElementById("dots");
+  const srsGradeSection = document.getElementById("srsGradeSection");
+
+  // Progress — use original count so bar doesn't go backwards on re-queued cards
+  document.getElementById("progBar").style.background = c.borderSoft;
+  const fill = document.getElementById("progFill");
+  const progressDenom = Math.max(state.srsSessionOriginalCount, state.srsSessionCards.length);
+  fill.style.width = `${progressDenom ? ((state.srsSessionIdx + 1) / progressDenom) * 100 : 0}%`;
+  fill.style.background = state.srsSession === 'learn' ? 'var(--blue)' : 'var(--amber)';
+
+  if (state.roundComplete) {
+    cardWrap.classList.add("hidden");
+    dots.classList.add("hidden");
+    srsGradeSection.classList.add("hidden");
+    roundComplete.classList.remove("hidden");
+
+    const total = state.srsSessionResults.length;
+    const againCount = state.srsSessionResults.filter(r => r.quality === 'again').length;
+    const knownMarked = state.srsSessionResults.filter(r => r.quality === 'known').length;
+    const reviewed = total - knownMarked;
+
+    let summaryParts = [];
+    if (reviewed > 0) summaryParts.push(`${reviewed} card${reviewed === 1 ? '' : 's'} ${state.srsSession === 'learn' ? 'added to your review pile' : 'reviewed'}`);
+    if (knownMarked > 0) summaryParts.push(`${knownMarked} dismissed as already known`);
+    if (againCount > 0) summaryParts.push(`${againCount} marked for re-review tomorrow`);
+    const summaryText = summaryParts.join('. ') + (againCount === 0 && knownMarked === 0 ? '. All looking strong!' : '.');
+
+    roundComplete.innerHTML = `
+      <div class="round-complete-meta">${state.srsSession === 'learn' ? 'Learning' : 'Review'} complete</div>
+      <h2>${againCount === 0 ? 'Perfect session!' : 'Session done.'}</h2>
+      <p>${summaryText}</p>
+      <div class="round-complete-actions">
+        <button class="mark-btn mark-got round-btn" id="srsBackBtn">Back to dashboard</button>
+        ${state.fullscreen ? '<button class="mark-btn round-btn" id="exitFullscreenRoundBtn">Exit fullscreen</button>' : ''}
+      </div>
+    `;
+
+    document.getElementById("srsBackBtn")?.addEventListener("click", exitSRSSession);
+    document.getElementById("exitFullscreenRoundBtn")?.addEventListener("click", exitFullscreenMode);
+    return;
+  }
+
+  cardWrap.classList.remove("hidden");
+  dots.classList.add("hidden");
+  roundComplete.classList.add("hidden");
+
+  if (!card) return;
+
+  // Render SRS grade buttons
+  renderSRSGradeButtons();
+
+  // Only show grade buttons when flipped
+  if (state.flipped) {
+    srsGradeSection.classList.remove("hidden");
+  } else {
+    srsGradeSection.classList.add("hidden");
+  }
+
+  document.getElementById("cardInner").className = state.flipped ? "card-inner flipped" : "card-inner";
+  const charSize = state.fullscreen ? (card.c.length > 2 ? 108 : 148) : (card.c.length > 2 ? 64 : 80);
+  const backCharSize = state.fullscreen ? 138 : 80;
+  const engSize = state.fullscreen ? 42 : 22;
+  const ghostSize = state.fullscreen ? 96 : 40;
+  const pinyinSize = state.fullscreen ? 24 : 14;
+  const backPinyinSize = state.fullscreen ? 26 : 16;
+
+  const srs = loadSRS();
+  const srsData = srs[srsKey(card)];
+  let statusBadge = '';
+  if (srsData && srsData.reps > 0) {
+    statusBadge = `<div class="learned-badge">interval: ${formatInterval(srsData.interval)}</div>`;
+  }
+
+  const front = document.getElementById("cardFront");
+  front.style.background = c.surface;
+  front.style.border = `1px solid ${c.borderSoft}`;
+  front.style.boxShadow = c.shadow;
+  if (state.srsDirection === "zh-en") {
+    front.innerHTML = `<div class="card-section">${card.section || card.topicName || ''}</div><div class="card-char" style="font-size:${charSize}px;color:${c.text}">${card.c}</div><div class="card-pinyin" style="font-size:${pinyinSize}px">${card.p}</div><div class="tap-hint">tap to reveal</div>${statusBadge}`;
+  } else {
+    front.innerHTML = `<div class="card-section">${card.section || card.topicName || ''}</div><div class="card-eng" style="font-size:${engSize}px">${card.e}</div><div class="tap-hint">tap to reveal</div>${statusBadge}`;
+  }
+
+  const back = document.getElementById("cardBack");
+  back.style.background = c.surface2;
+  back.style.border = `1px solid ${c.blueBorder}`;
+  back.style.boxShadow = c.shadow;
+  if (state.srsDirection === "zh-en") {
+    back.innerHTML = `<div class="card-section">${card.section || card.topicName || ''}</div><div class="card-eng" style="font-size:${engSize}px">${card.e}</div><div class="card-ghost" style="font-size:${ghostSize}px">${card.c}</div>`;
+  } else {
+    back.innerHTML = `<div class="card-section">${card.section || card.topicName || ''}</div><div class="card-char" style="font-size:${backCharSize}px;color:${c.text}">${card.c}</div><div class="card-pinyin" style="font-size:${backPinyinSize}px">${card.p}</div>`;
+  }
+}
+
+
+function renderBrowseMode() {
+  const c = color();
+  const knownCount = state.cards.filter(x => state.known[getCardKey(x)]).length;
+
+  const card = state.cards[state.cardIdx];
+  const topic = topics[state.topicIdx];
+
+  // Sections
+  document.getElementById("sectionBtns").innerHTML = `<button class="sec-btn" data-sec="all" style="color:${state.sectionIdx===null?c.blueDeep:c.textSoft};background:${state.sectionIdx===null?c.blueSoft:c.surface};border:1px solid ${state.sectionIdx===null?c.blueBorder:c.borderSoft};font-weight:${state.sectionIdx===null?600:400}">All</button>` +
+    topic.sections.map((s, i) => `<button class="sec-btn" data-sec="${i}" style="color:${state.sectionIdx===i?c.blueDeep:c.textSoft};background:${state.sectionIdx===i?c.blueSoft:c.surface};border:1px solid ${state.sectionIdx===i?c.blueBorder:c.borderSoft};font-weight:${state.sectionIdx===i?600:400}">${s.label}</button>`).join("");
+
+  // Controls
+  const shBtn = document.getElementById("shuffleBtn");
+  shBtn.textContent = state.shuffled ? "⟳ Shuffled" : "⟳ Shuffle";
+  shBtn.style.border = `1px solid ${state.shuffled ? c.blueBorder : c.border}`;
+  shBtn.style.color = state.shuffled ? c.blueDeep : c.textSoft;
+  shBtn.style.background = state.shuffled ? c.blueSoft : c.surface;
+
+  const dirBtn = document.getElementById("dirBtn");
+  dirBtn.textContent = state.direction === "zh-en" ? "中→EN" : "EN→中";
+  dirBtn.style.border = `1px solid ${c.border}`;
+  dirBtn.style.color = c.textSoft;
+  document.getElementById("kbHint").style.color = c.textFaint;
+
+  // Progress
+  document.getElementById("progBar").style.background = c.borderSoft;
+  const fill = document.getElementById("progFill");
+  fill.style.width = `${state.cards.length ? ((state.cardIdx + 1) / state.cards.length) * 100 : 0}%`;
+  fill.style.background = c.blue;
+
+  const cardWrap = document.getElementById("cardWrap");
+  const roundComplete = document.getElementById("roundComplete");
+  const nav = document.getElementById("flashcardNav");
+  const dots = document.getElementById("dots");
+
+  if (state.roundComplete) {
+    const wrongCount = state.retryCards.length;
+    const correctCount = state.cards.length - wrongCount;
+    const allCorrect = wrongCount === 0;
+    cardWrap.classList.add("hidden");
+    nav.classList.add("hidden");
+    dots.classList.add("hidden");
+    roundComplete.classList.remove("hidden");
+    roundComplete.innerHTML = `
+      <div class="round-complete-meta">Round ${state.roundNumber} complete</div>
+      <h2>${allCorrect ? 'All correct.' : 'Nice work.'}</h2>
+      <p>${allCorrect ? `You got all ${state.cards.length} card${state.cards.length === 1 ? '' : 's'} right.` : `You got ${correctCount} right. Redo the ${wrongCount} still-learning card${wrongCount === 1 ? '' : 's'} and keep going until they are all correct.`}</p>
+      <div class="round-complete-actions">
+        ${allCorrect ? '' : '<button class="mark-btn mark-got round-btn" id="redoRoundBtn">Redo still learning</button>'}
+        <button class="mark-btn mark-learn round-btn" id="restartSetBtn">Restart set</button>
+        ${state.fullscreen ? '<button class="mark-btn round-btn" id="exitFullscreenRoundBtn">Exit fullscreen</button>' : ''}
+      </div>
+    `;
+    return;
+  }
+
+  cardWrap.classList.remove("hidden");
+  nav.classList.remove("hidden");
+  dots.classList.remove("hidden");
+  roundComplete.classList.add("hidden");
+
+  if (!card) return;
+
+  document.getElementById("cardInner").className = state.flipped ? "card-inner flipped" : "card-inner";
+  const isKnown = state.known[getCardKey(card)];
+  const charSize = state.fullscreen ? (card.c.length > 2 ? 108 : 148) : (card.c.length > 2 ? 64 : 80);
+  const backCharSize = state.fullscreen ? 138 : 80;
+  const engSize = state.fullscreen ? 42 : 22;
+  const ghostSize = state.fullscreen ? 96 : 40;
+  const pinyinSize = state.fullscreen ? 24 : 14;
+  const backPinyinSize = state.fullscreen ? 26 : 16;
+
+  const front = document.getElementById("cardFront");
+  front.style.background = c.surface;
+  front.style.border = `1px solid ${c.borderSoft}`;
+  front.style.boxShadow = c.shadow;
+  if (state.direction === "zh-en") {
+    front.innerHTML = `<div class="card-section">${card.section}</div><div class="card-char" style="font-size:${charSize}px;color:${c.text}">${card.c}</div><div class="card-pinyin" style="font-size:${pinyinSize}px">${card.p}</div><div class="tap-hint">tap to reveal</div>${isKnown?'<div class="learned-badge">learned</div>':''}`;
+  } else {
+    front.innerHTML = `<div class="card-section">${card.section}</div><div class="card-eng" style="font-size:${engSize}px">${card.e}</div><div class="tap-hint">tap to reveal</div>${isKnown?'<div class="learned-badge">learned</div>':''}`;
+  }
+
+  const back = document.getElementById("cardBack");
+  back.style.background = c.surface2;
+  back.style.border = `1px solid ${c.blueBorder}`;
+  back.style.boxShadow = c.shadow;
+  if (state.direction === "zh-en") {
+    back.innerHTML = `<div class="card-section">${card.section}</div><div class="card-eng" style="font-size:${engSize}px">${card.e}</div><div class="card-ghost" style="font-size:${ghostSize}px">${card.c}</div>`;
+  } else {
+    back.innerHTML = `<div class="card-section">${card.section}</div><div class="card-char" style="font-size:${backCharSize}px;color:${c.text}">${card.c}</div><div class="card-pinyin" style="font-size:${backPinyinSize}px">${card.p}</div>`;
+  }
+
+  // Nav
+  document.getElementById("prevBtn").style.cssText = `width:44px;height:44px;border-radius:22px;background:${c.surface};font-size:18px;display:flex;align-items:center;justify-content:center;border:1px solid ${c.borderSoft};color:${state.cardIdx===0?c.textFaint:c.text}`;
+  document.getElementById("nextBtn").style.cssText = `width:44px;height:44px;border-radius:22px;background:${c.surface};font-size:18px;display:flex;align-items:center;justify-content:center;border:1px solid ${c.borderSoft};color:${state.cardIdx===state.cards.length-1?c.textFaint:c.text}`;
+  document.getElementById("navCount").textContent = `${state.cardIdx + 1} / ${state.cards.length}`;
+  document.getElementById("navCount").style.color = c.textSoft;
+
+  // Dots
+  document.getElementById("dots").innerHTML = state.cards.map((x, i) => {
+    const bg = i === state.cardIdx ? c.blue : state.known[getCardKey(x)] ? c.knownDot : c.border;
+    const scale = i === state.cardIdx ? "scale(1.4)" : "scale(1)";
+    return `<button class="dot" data-dot="${i}" style="background:${bg};transform:${scale}"></button>`;
+  }).join("");
+}
+
+
+// ══════════════════════════════════════════════════════════
+// EVENTS
+// ══════════════════════════════════════════════════════════
+document.getElementById("modeTabs").addEventListener("click", e => {
+  const btn = e.target.closest("[data-mode]");
+  if (btn) {
+    if (state.srsSession && btn.dataset.mode !== 'review') {
+      // Leaving an active SRS session
+      if (confirm('Leave the current session? Progress on unfinished cards won\'t be saved.')) {
+        exitSRSSession();
+        state.mode = btn.dataset.mode;
+      }
+    } else {
+      state.mode = btn.dataset.mode;
+      state.srsSession = null;
+    }
+    render();
+  }
+});
+
+document.getElementById("topicPills").addEventListener("click", e => {
+  const btn = e.target.closest("[data-topic]");
+  if (!btn) return;
+  state.topicIdx = parseInt(btn.dataset.topic);
+  state.sectionIdx = null; state.cardIdx = 0; state.flipped = false;
+  buildCards(); applyTheme(); render();
+});
+document.getElementById("sectionBtns").addEventListener("click", e => {
+  const btn = e.target.closest("[data-sec]");
+  if (!btn) return;
+  state.sectionIdx = btn.dataset.sec === "all" ? null : parseInt(btn.dataset.sec);
+  state.cardIdx = 0; state.flipped = false;
+  buildCards(); applyTheme(); render();
+});
+document.getElementById("shuffleBtn").addEventListener("click", () => {
+  state.shuffled = !state.shuffled; state.cardIdx = 0; state.flipped = false;
+  buildCards(); applyTheme(); render();
+});
+document.getElementById("dirBtn").addEventListener("click", () => {
+  state.direction = state.direction === "zh-en" ? "en-zh" : "zh-en";
+  state.flipped = false; skipFlipAnimation(); render();
+});
+document.getElementById("cardWrap").addEventListener("click", (e) => {
+  if (e.target.closest('.fs-toggle')) return;
+  state.flipped = !state.flipped; render();
+});
+document.getElementById("fullscreenBtn").addEventListener("click", e => {
+  e.stopPropagation();
+  toggleFullscreenMode();
+});
+document.getElementById("prevBtn").addEventListener("click", () => {
+  if (state.cardIdx > 0) switchToCard(state.cardIdx - 1);
+});
+document.getElementById("nextBtn").addEventListener("click", () => {
+  if (state.cardIdx < state.cards.length - 1) switchToCard(state.cardIdx + 1);
+});
+document.getElementById("gotBtn").addEventListener("click", () => { handleAnswer('got'); });
+document.getElementById("learnBtn").addEventListener("click", () => { handleAnswer('learn'); });
+document.getElementById("dots").addEventListener("click", e => {
+  const btn = e.target.closest("[data-dot]");
+  if (btn) switchToCard(parseInt(btn.dataset.dot));
+});
+document.getElementById("themeToggle").addEventListener("click", () => {
+  state.theme = state.theme === 'light' ? 'dark' : 'light';
+  render();
+});
+document.getElementById("roundComplete").addEventListener("click", e => {
+  const redoBtn = e.target.closest('#redoRoundBtn');
+  const restartBtn = e.target.closest('#restartSetBtn');
+  const exitFsBtn = e.target.closest('#exitFullscreenRoundBtn');
+  if (redoBtn) redoStillLearning();
+  if (restartBtn) restartSet();
+  if (exitFsBtn) exitFullscreenMode();
+});
+
+// SRS grade buttons (delegated)
+document.getElementById("srsGradeBtns").addEventListener("click", e => {
+  const btn = e.target.closest("[data-grade]");
+  if (btn) handleSRSGrade(btn.dataset.grade);
+});
+
+document.addEventListener("fullscreenchange", () => {
+  if (!document.fullscreenElement && state.fullscreen) {
+    state.fullscreen = false;
+    render();
+  }
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && state.fullscreen) {
+    e.preventDefault();
+    exitFullscreenMode();
+    return;
+  }
+  if (state.mode === 'review' && state.srsSession) {
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      if (!state.flipped) {
+        state.flipped = true;
+        render();
+      }
+    }
+    if (state.flipped) {
+      if (e.key === "1") handleSRSGrade('again');
+      if (e.key === "2") handleSRSGrade('hard');
+      if (e.key === "3") handleSRSGrade('good');
+      if (e.key === "4") handleSRSGrade('easy');
+    }
+    return;
+  }
+  if (state.mode !== "cards") return;
+  if (e.key === "ArrowRight" || e.key === "d") { if (state.cardIdx < state.cards.length - 1) switchToCard(state.cardIdx + 1); }
+  if (e.key === "ArrowLeft" || e.key === "a") { if (state.cardIdx > 0) switchToCard(state.cardIdx - 1); }
+  if (e.key === " " || e.key === "Enter") { e.preventDefault(); state.flipped = !state.flipped; render(); }
+});
+
+// ── Mobile: Swipe gesture support ──
+(function() {
+  const cardEl = document.getElementById("cardWrap");
+  let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+  const SWIPE_THRESHOLD = 50;
+  const SWIPE_TIME_LIMIT = 400;
+
+  cardEl.addEventListener("touchstart", function(e) {
+    const touch = e.changedTouches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    touchStartTime = Date.now();
+  }, { passive: true });
+
+  cardEl.addEventListener("touchend", function(e) {
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - touchStartX;
+    const dy = touch.clientY - touchStartY;
+    const elapsed = Date.now() - touchStartTime;
+
+    if (elapsed > SWIPE_TIME_LIMIT) return;
+    if (Math.abs(dx) < SWIPE_THRESHOLD) return;
+    if (Math.abs(dy) > Math.abs(dx)) return;
+
+    e.preventDefault();
+
+    if (state.mode === 'cards') {
+      if (dx < 0 && state.cardIdx < state.cards.length - 1) {
+        switchToCard(state.cardIdx + 1);
+      } else if (dx > 0 && state.cardIdx > 0) {
+        switchToCard(state.cardIdx - 1);
+      }
+    }
+  }, { passive: false });
+})();
+
+// ── iOS Safari fullscreen fix ──
+(function() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  if (isIOS) {
+    const origEnter = enterFullscreenMode;
+    enterFullscreenMode = function() {
+      state.fullscreen = true;
+      syncFullscreenUI();
+      window.scrollTo(0, 0);
+      render();
+    };
+
+    const origExit = exitFullscreenMode;
+    exitFullscreenMode = function() {
+      state.fullscreen = false;
+      syncFullscreenUI();
+      render();
+    };
+  }
+})();
+
+buildCards(); applyTheme(); syncFullscreenUI(); render();
+</script>
+</body>
+</html>
